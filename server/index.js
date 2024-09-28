@@ -51,7 +51,7 @@ app.get("/shop", async function (req, res) {
   res.render("shop", { menus: filteredMenus, category });
 });
 
-
+app.get("/")
 
 
 // =========== //

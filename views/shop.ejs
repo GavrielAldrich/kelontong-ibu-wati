@@ -92,10 +92,11 @@
           <% menus.forEach(menu => { %>
           <div
             class="col-lg-4 col-md-6 text-center <%= menu.menu_category.toLowerCase() %>"
+            id="<%= menu.menu_id %>"
           >
             <div class="single-product-item">
               <div class="product-image">
-                <a href="single-product.html"
+                <a href="/detail/<%= menu.menu_id %>"
                   ><img
                     src="<%= menu.menu_image %>"
                     alt="<%= menu.menu_title %>"
@@ -103,7 +104,7 @@
               </div>
               <h3><%= menu.menu_title %></h3>
               <p class="product-price">
-                <span>Per Kg</span> <%= menu.menu_price %> Rp
+                Rp <%= menu.menu_price %> 
               </p>
               <a href="cart.html" class="cart-btn"
                 ><i class="fas fa-shopping-cart"></i> Add to Cart</a
