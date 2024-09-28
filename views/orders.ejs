@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Page</title>
+
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Welcome Admin</h1>
+      <form action="/logout" method="POST">
+        <button>Logout</button>
+      </form>
+    </header>
+    <main style="min-height: 100%">
+      <table>
+        <th colspan="5">
+          Menus Table
+        </th>
+        <tr>
+          <th>Images</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Stock</th>
+        </tr>
+        <tr>
+          <td>Alfreds Futterkiste</td>
+          <td>Maria Anders</td>
+          <td>Germany</td>
+          <td>Germany</td>
+          <td>Germany</td>
+        </tr>
+      </table>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/"
+    />
+
+    <!-- title -->
+    <title>Shop</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png" />
+    <!-- google font -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="assets/css/all.min.css" />
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+    <!-- owl carousel -->
+    <link rel="stylesheet" href="assets/css/owl.carousel.css" />
+    <!-- magnific popup -->
+    <link rel="stylesheet" href="assets/css/magnific-popup.css" />
+    <!-- animate css -->
+    <link rel="stylesheet" href="assets/css/animate.css" />
+    <!-- mean menu css -->
+    <link rel="stylesheet" href="assets/css/meanmenu.min.css" />
+    <!-- main style -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <!-- responsive -->
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+  </head>
+  <body>
+    <%- include ("components/header.ejs") %>
+
+    <!-- breadcrumb-section -->
+    <div class="breadcrumb-section breadcrumb-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 offset-lg-2 text-center">
+            <div class="breadcrumb-text">
+              <p>Foods and Goods</p>
+              <h1>Shop</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end breadcrumb section -->
+
+    <!-- products -->
+    <div class="product-section mt-150 mb-150">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="product-filters">
+              <ul>
+                <a href="/shop?category=all">
+                  <li class="<%= category === 'all' ? 'active' : '' %>">All</li>
+                </a>
+                <a href="/shop?category=makanan">
+                  <li class="<%= category === 'makanan' ? 'active' : '' %>">
+                    Makanan
+                  </li>
+                </a>
+                <a href="/shop?category=minuman">
+                  <li class="<%= category === 'minuman' ? 'active' : '' %>">
+                    Minuman
+                  </li>
+                </a>
+                <a href="/shop?category=appetizer">
+                  <li class="<%= category === 'appetizer' ? 'active' : '' %>">
+                    Appetizer
+                  </li>
+                </a>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row product-lists">
+          <% menus.forEach(menu => { %>
+          <div
+            class="col-lg-4 col-md-6 text-center <%= menu.menu_category.toLowerCase() %>"
+          >
+            <div class="single-product-item">
+              <div class="product-image">
+                <a href="single-product.html"
+                  ><img
+                    src="<%= menu.menu_image %>"
+                    alt="<%= menu.menu_title %>"
+                /></a>
+              </div>
+              <h3><%= menu.menu_title %></h3>
+              <p class="product-price">
+                <span>Per Kg</span> <%= menu.menu_price %> Rp
+              </p>
+              <a href="cart.html" class="cart-btn"
+                ><i class="fas fa-shopping-cart"></i> Add to Cart</a
+              >
+            </div>
+          </div>
+          <% }); %>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <div class="pagination-wrap">
+              <ul>
+                <li><a href="#">Prev</a></li>
+                <li><a href="#">1</a></li>
+                <li><a class="active" href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">Next</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end products -->
+
+    <%- include ("components/footer.ejs") %>
+
+    <!-- jquery -->
+    <script src="assets/js/jquery-1.11.3.min.js"></script>
+    <!-- bootstrap -->
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- count down -->
+    <script src="assets/js/jquery.countdown.js"></script>
+    <!-- isotope -->
+    <script src="assets/js/jquery.isotope-3.0.6.min.js"></script>
+    <!-- waypoints -->
+    <script src="assets/js/waypoints.js"></script>
+    <!-- owl carousel -->
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <!-- magnific popup -->
+    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <!-- mean menu -->
+    <script src="assets/js/jquery.meanmenu.min.js"></script>
+    <!-- sticker js -->
+    <script src="assets/js/sticker.js"></script>
+    <!-- main js -->
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

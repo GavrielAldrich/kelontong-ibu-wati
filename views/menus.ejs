@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Page</title>
+
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+        img {
+            max-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome Admin</h1>
+        <form action="/logout" method="POST">
+            <button>Logout</button>
+        </form>
+    </header>
+    <main style="min-height: 100%">
+        <table width="100%">
+            <tr>
+                <th colspan="6">Menus Table</th>
+            </tr>
+            <tr>
+                <th>Images</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Action</th>
+            </tr>
+            <% menus.forEach((res) => { %>
+                <tr>
+                    <td><img src="<%= res.menu_image %>" alt=""></td>
+                    <td><%= res.menu_title %></td>
+                    <td><%= res.menu_price %></td>
+                    <td><%= res.menu_category %></td>
+                    <td><%= res.menu_stock %></td>
+                    <td>
+                        <form action="/admin/menus/edit/<%= res.menu_id %>" method="GET" style="display:inline;">
+                            <button type="submit">Edit</button>
+                        </form>
+                        <form action="/admin/menus/delete/<%= res.menu_id %>" method="POST" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </table>
+    </main>
+</body>
+</html>

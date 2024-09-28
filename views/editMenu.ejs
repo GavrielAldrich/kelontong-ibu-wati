@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Menu Item</title>
+  </head>
+  <body>
+    <h1>Edit Menu Item</h1>
+    <form action="/admin/menus/edit/<%= menu.menu_id %>" method="POST">
+      <label for="title">Title:</label>
+      <input
+        type="text"
+        name="title"
+        value="<%= menu.menu_title %>"
+        required
+      /><br />
+
+      <label for="price">Price:</label>
+      <input
+        type="number"
+        name="price"
+        value="<%= menu.menu_price %>"
+        required
+      /><br />
+
+      <label for="category">Category:</label>
+      <input
+        type="text"
+        name="category"
+        value="<%= menu.menu_category %>"
+        required
+      /><br />
+
+      <label for="stock">Stock:</label>
+      <input
+        type="number"
+        name="stock"
+        value="<%= menu.menu_stock %>"
+        required
+      /><br />
+
+      <label for="image">Image URL:</label>
+      <input
+        type="text"
+        name="image"
+        value="<%= menu.menu_image %>"
+        required
+      /><br />
+
+      <button type="submit">Update</button>
+    </form>
+  </body>
+</html>
