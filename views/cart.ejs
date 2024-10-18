@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/"
+    />
+
+    <!-- Midtrans Script -->
+    <script type="text/javascript"
+		src="https://app.stg.midtrans.com/snap/snap.js"
+    data-client-key="SET_YOUR_CLIENT_KEY_HERE"></script>
+
+    <!-- title -->
+    <title>Cart</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png" />
+    <!-- google font -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="/assets/css/all.min.css" />
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+    <!-- owl carousel -->
+    <link rel="stylesheet" href="/assets/css/owl.carousel.css" />
+    <!-- magnific popup -->
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css" />
+    <!-- animate css -->
+    <link rel="stylesheet" href="/assets/css/animate.css" />
+    <!-- mean menu css -->
+    <link rel="stylesheet" href="/assets/css/meanmenu.min.css" />
+    <!-- main style -->
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <!-- responsive -->
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+
+    <style>
+
+.disabled-link {
+    pointer-events: none;
+}
+    </style>
+  </head>
+  <body>
+    <%- include ("components/header.ejs") %>
+
+    <!-- breadcrumb-section -->
+    <div class="breadcrumb-section breadcrumb-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 offset-lg-2 text-center">
+            <div class="breadcrumb-text">
+              <p>Fresh and Organic</p>
+              <h1>Cart</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end breadcrumb section -->
+
+    <!-- cart -->
+    <div class="cart-section mt-150 mb-150">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-12">
+            <div class="cart-table-wrap">
+              <table class="cart-table">
+                <thead class="cart-table-head">
+                  <tr class="table-head-row">
+                    <th class="product-remove"></th>
+                    <th class="product-name">Name</th>
+                    <th class="product-price">Price</th>
+                    <th class="product-quantity">Quantity</th>
+                    <th class="product-total">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="cart-body">
+                  <!-- Cart items will be dynamically rendered here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="total-section">
+              <table class="total-table">
+                <thead class="total-table-head">
+                  <tr class="table-total-row">
+                    <th>Total</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="total-data">
+                    <td><strong>Subtotal: </strong></td>
+                    <td class="subtotal">Rp 0</td>
+                  </tr>
+                  <tr class="total-data">
+                    <td><strong>Fee: </strong></td>
+                    <td id="fee">Rp 0</td>
+                  </tr>
+                  <tr class="total-data">
+                    <td><strong>Total: </strong></td>
+                    <td id="total">Rp 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="cart-buttons">
+
+                <!-- <a
+                href="/checkout"
+                id="checkout-anchor"
+                onclick="checkoutProducts(document.getElementById('total').innerHTML)"
+                class="boxed-btn"
+                >Pay Now</a> -->
+
+                <a
+                href="/checkout"
+                id="checkout-anchor"
+                onclick="checkoutProductsMidtrans(document.getElementById('total').innerHTML)"
+                class="boxed-btn"
+                >Pay With E-Wallet</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end cart -->
+
+    <%- include ("components/footer.ejs") %>
+
+    <!-- jquery -->
+    <script src="/assets/js/jquery-1.11.3.min.js"></script>
+    <!-- bootstrap -->
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <!-- count down -->
+    <script src="/assets/js/jquery.countdown.js"></script>
+    <!-- isotope -->
+    <script src="/assets/js/jquery.isotope-3.0.6.min.js"></script>
+    <!-- waypoints -->
+    <script src="/assets/js/waypoints.js"></script>
+    <!-- owl carousel -->
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <!-- magnific popup -->
+    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
+    <!-- mean menu -->
+    <script src="/assets/js/jquery.meanmenu.min.js"></script>
+    <!-- sticker js -->
+    <script src="/assets/js/sticker.js"></script>
+    <!-- main js -->
+    <script src="/assets/js/main.js"></script>
+
+    <!-- Script to render cart items from localStorage -->
+    <script>
+      // Variables for subtotal and shipping
+      let subtotal = 0;
+      let shipping = 2500;
+      document.getElementById("fee").innerText = `Rp ${shipping}`;
+      let itemTotal;
+        
+      // Function to render cart items
+      function renderCart() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let cartBody = document.getElementById("cart-body");
+      cartBody.innerHTML = "";
+      
+      
+
+
+
+    if (cart.length === 0) {
+        cartBody.innerHTML = "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+        document.getElementById("checkout-anchor").classList.add("disabled-link"); // Add disabled class
+        document.getElementById("checkout-anchor").style.backgroundColor = "darkgrey";
+        document.getElementById("checkout-anchor").style.color = "#fff"; // Change text color if needed
+        document.getElementById("fee").innerText = 'Rp 0';
+        return;
+    }
+
+    cart.forEach((item) => {
+        let itemPrice = parseFloat(item.price) || 0;
+        let itemQuantity = parseInt(item.qty) || 0;
+        let itemTotal = itemPrice * itemQuantity;
+        subtotal += itemTotal;
+
+        let itemRow = `
+            <tr class="table-body-row">
+                <td class="product-remove"><a href="#" onclick="removeFromCart(${item.id})"><i class="far fa-window-close"></i></a></td>
+                <td class="product-name">${item.title}</td>
+                <td class="product-price">Rp ${itemPrice}</td>
+                <td class="product-quantity">
+                    <input type="number" value="${itemQuantity}" min="1" onchange="updateQuantity(${item.id}, this.value)">
+                </td>
+                <td class="product-total">Rp ${itemTotal}</td>
+            </tr>
+        `;
+
+        cartBody.innerHTML += itemRow;
+    });
+
+    document.querySelector(".total-table .subtotal").innerText = `Rp ${subtotal}`;
+    document.getElementById("total").innerText = `Rp ${subtotal + shipping}`;
+
+}
+
+
+
+      // Function to remove an item from the cart
+      function removeFromCart(itemId) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart = cart.filter((item) => item.id !== itemId);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart(); // Re-render the cart
+      }
+
+      // Function to update the quantity of an item
+      function updateQuantity(itemId, newQuantity) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart = cart.map((item) => {
+          if (item.id === itemId) {
+            item.qty = parseInt(newQuantity);
+          }
+          return item;
+        });
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart(); // Re-render the cart
+      }
+
+      function checkoutProducts(totalPrice) {
+        try {
+          let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+          const strToIntPrice = Number(totalPrice.split(" ")[1])
+
+          const checkout = [];
+          cart.map((item)=>{
+            checkout.push({...item, subtotal: subtotal, fee: shipping, total:itemTotal + shipping})
+          })
+          localStorage.setItem("cart", JSON.stringify(checkout));
+
+          window.location.href = "/checkout"
+        } catch (error) {
+          alert("Error while updating cart")
+        }
+      }
+
+      function checkoutProductsMidtrans(totalPrice) {
+    try {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const strToIntPrice = Number(totalPrice.split(" ")[1]);
+
+        // Prepare the data to send
+        const checkoutData = {
+            cart: cart,
+            subtotal: subtotal,
+            fee: shipping,
+            total: subtotal + shipping,
+        };
+
+        // Send the data to the backend
+        fetch('/checkout', {
+            method: 'POST', // Use POST method
+            // authorization: "Basic U0ItTWlkLXNlcnZlci0zaTk4dzB6Z18tUC1iUlk4aERBblpTWEI=",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(checkoutData), // Convert the data to JSON
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle successful response
+            console.log('Checkout successful:', data);
+            // Optionally, redirect or notify the user
+            window.location.href = data.redirect; // Redirect to a thank-you page or another route
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert("Error during checkout. Please try again.");
+        });
+
+    } catch (error) {
+      console.log("Error", error)
+        alert("Error while processing checkout");
+    }
+}
+
+
+      document
+        .getElementById("checkout-anchor")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+        });
+
+      // Call renderCart when the page loads
+      document.addEventListener("DOMContentLoaded", renderCart);
+    </script>
+  </body>
+</html>

@@ -5,14 +5,19 @@ import { fileURLToPath } from "url";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser"; // Import cookie-parser
 import axios from "axios";
+import Midtrans from "midtrans-client";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const SECRET_KEY = "your_secret_key"; // Replace with a secure key
+const PORT = process.env.PORT
+const SECRET_KEY = process.env.SECRET_KEY; // Replace with a secure key
+const MIDTRANS_SERVER_KEY = process.env.MIDTRANS_SERVER_KEY;
 
 // Middleware
 app.use(express.static(path.join(__dirname, "../views"))); // Serve static files from public/assets
@@ -20,6 +25,13 @@ app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser()); // Add cookie-parser middleware
+app.use(express.json()); // Add this line to parse JSON bodies
+
+let snap = new Midtrans.Snap({
+  // Set to true if you want Production Environment (accept real transaction).
+  isProduction: false,
+  serverKey: MIDTRANS_SERVER_KEY,
+});
 
 // =========== //
 // USER AREA //
@@ -38,21 +50,100 @@ app.get("/contact", function (req, res) {
   res.render("contact");
 });
 
-app.get("/shop", async function (req, res) {
-  const category = req.query.category || "all"; // Get the category from the query string
-  const getMenus = await axios.get("https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus");
-  const menus = Array.isArray(getMenus.data) ? getMenus.data : [getMenus.data];
-
-  // Filter menus if necessary
-  const filteredMenus = category !== "all"
-    ? menus.filter(menu => menu.menu_category === category)
-    : menus;
-
-  res.render("shop", { menus: filteredMenus, category });
+app.get("/cart", function (req, res) {
+  res.render("cart");
 });
 
-app.get("/")
+app.get("/shop", async function (req, res) {
+  try {
+    const category = req.query.category || "all"; // Get the category from the query string
+    const getMenus = await axios.get(
+      "https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus"
+    );
+    const menus = Array.isArray(getMenus.data)
+      ? getMenus.data
+      : [getMenus.data];
 
+    // Filter menus if necessary
+    const filteredMenus =
+      category !== "all"
+        ? menus.filter((menu) => menu.menu_category === category)
+        : menus;
+
+    res.render("shop", { menus: filteredMenus, category });
+  } catch (error) {
+    console.log("Error on server: ", error);
+    res.status(500).send("Error on server");
+  }
+});
+
+app.get("/checkout", function (req, res) {
+  res.render("checkout");
+});
+
+app.post("/checkout", async function (req, res) {
+  try {
+    const { cart, subtotal, fee, total } = req.body; // Extract data from the request body
+
+    // Function to generate a random order ID
+    function generateOrderId() {
+      return "ORDER-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+    }
+
+    // Create the parameter object using the data from the request
+    let parameter = {
+      transaction_details: {
+        order_id: generateOrderId(), // Generate a random order ID
+        gross_amount: total, // Use the total amount sent in the request
+      },
+      credit_card: {
+        secure: true, // Keep secure as true
+      },
+      customer_details: {
+        first_name: "budi",
+        last_name: "pratama",
+        // Remove email and phone as per your requirement
+        email: "budi.pra@example.com",
+        phone: "08111222333",
+      },
+    };
+
+    // Here you would typically call the payment API with the parameter
+    // Example (pseudo-code):
+    // const paymentResponse = await paymentAPI.createPayment(parameter);
+
+    // Send a response back to the client
+    snap.createTransaction(parameter).then((transaction) => {
+      // transaction token
+      let redirectURL = transaction.redirect_url;
+      res.status(200).json({
+        success: true,
+        message: "Checkout processed successfully",
+        parameter,
+        redirect: redirectURL,
+      });
+    });
+
+  } catch (error) {
+    console.log("Error on server", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error processing checkout" });
+  }
+});
+
+app.get("/detail/:product_id", async function (req, res) {
+  const { product_id } = req.params;
+  const getProduct = await axios.get(
+    `https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus/${product_id}`
+  );
+
+  const product = Array.isArray(getProduct.data)
+    ? getProduct.data
+    : [getProduct.data];
+
+  res.render("detail-product", { product });
+});
 
 // =========== //
 // ADMIN AREA //
@@ -75,6 +166,35 @@ function verifyToken(req, res, next) {
     next();
   });
 }
+
+// GET auth view
+app.get("/auth", function (req, res) {
+  res.render("auth");
+});
+
+// POST to authenticate and generate token
+app.post("/auth", async function (req, res) {
+  const { username, password } = req.body;
+
+  // Hard-coded admin authentication for demonstration purposes
+
+  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASS) {
+    // Generate JWT token
+    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
+
+    // Send the token as a cookie
+    res.cookie("token", token, { httpOnly: true });
+    return res.redirect("/admin");
+  } else {
+    return res.render("unauthenticated");
+  }
+});
+
+// Logout route to destroy the token
+app.post("/logout", function (req, res) {
+  res.clearCookie("token"); // Clear the cookie
+  res.redirect("/auth"); // Redirect to the home or login page
+});
 
 // GET Admin page (protected by JWT token)
 app.get("/admin", verifyToken, async function (req, res) {
@@ -154,35 +274,6 @@ app.post("/admin/menus/edit/:id", verifyToken, async function (req, res) {
 
 app.get("/admin/orders", function (req, res) {
   res.render("orders");
-});
-
-// GET auth view
-app.get("/auth", function (req, res) {
-  res.render("auth");
-});
-
-// POST to authenticate and generate token
-app.post("/auth", async function (req, res) {
-  const { username, password } = req.body;
-
-  // Hard-coded admin authentication for demonstration purposes
-
-  if (username === "admin" && password === "admin") {
-    // Generate JWT token
-    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
-
-    // Send the token as a cookie
-    res.cookie("token", token, { httpOnly: true });
-    return res.redirect("/admin");
-  } else {
-    return res.render("unauthenticated");
-  }
-});
-
-// Logout route to destroy the token
-app.post("/logout", function (req, res) {
-  res.clearCookie("token"); // Clear the cookie
-  res.redirect("/auth"); // Redirect to the home or login page
 });
 
 // Catch-all route for unknown paths
