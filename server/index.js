@@ -58,7 +58,7 @@ app.get("/shop", async function (req, res) {
   try {
     const category = req.query.category || "all"; // Get the category from the query string
     const getMenus = await axios.get(
-      "https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus"
+      process.env.API + "menus"
     );
     const menus = Array.isArray(getMenus.data)
       ? getMenus.data
@@ -135,7 +135,7 @@ app.post("/checkout", async function (req, res) {
 app.get("/detail/:product_id", async function (req, res) {
   const { product_id } = req.params;
   const getProduct = await axios.get(
-    `https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus/${product_id}`
+    process.env.API + `menus/${product_id}`
   );
 
   const product = Array.isArray(getProduct.data)
@@ -210,7 +210,7 @@ app.get("/admin", verifyToken, async function (req, res) {
 app.get("/admin/menus", verifyToken, async function (req, res) {
   try {
     const getMenus = await axios.get(
-      "https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus"
+      process.env.API + "menu"
     );
 
     // Assuming getMenu.data is an array; if not, wrap it in an array
@@ -228,7 +228,7 @@ app.get("/admin/menus", verifyToken, async function (req, res) {
 app.post("/admin/menus/delete/:id", verifyToken, async function (req, res) {
   try {
     await axios.delete(
-      `https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus/${req.params.id}`
+      process.env.API + `menus/${req.params.id}`
     );
     res.redirect("/admin/menus");
   } catch (error) {
@@ -241,7 +241,7 @@ app.post("/admin/menus/delete/:id", verifyToken, async function (req, res) {
 app.get("/admin/menus/edit/:id", verifyToken, async function (req, res) {
   try {
     const menu = await axios.get(
-      `https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus/${req.params.id}`
+      process.env.API`menus/${req.params.id}`
     );
     res.render("editMenu", { menu: menu.data });
   } catch (error) {
@@ -262,7 +262,7 @@ app.post("/admin/menus/edit/:id", verifyToken, async function (req, res) {
 
   try {
     await axios.put(
-      `https://66f64cd3436827ced97689ed.mockapi.io/api/v1/menus/${req.params.id}`,
+      process.env.API + `menus/${req.params.id}`,
       updatedMenu
     );
     res.redirect("/admin/menus");
