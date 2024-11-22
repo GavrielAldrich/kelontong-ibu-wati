@@ -15,7 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT
+const PORT = process.env.PORT;
 const SECRET_KEY = process.env.SECRET_KEY; // Replace with a secure key
 const MIDTRANS_SERVER_KEY = process.env.MIDTRANS_SERVER_KEY;
 
@@ -57,9 +57,7 @@ app.get("/cart", function (req, res) {
 app.get("/shop", async function (req, res) {
   try {
     const category = req.query.category || "all"; // Get the category from the query string
-    const getMenus = await axios.get(
-      process.env.API + "menus"
-    );
+    const getMenus = await axios.get(process.env.API + "menus");
     const menus = Array.isArray(getMenus.data)
       ? getMenus.data
       : [getMenus.data];
@@ -123,7 +121,6 @@ app.post("/checkout", async function (req, res) {
         redirect: redirectURL,
       });
     });
-
   } catch (error) {
     console.log("Error on server", error);
     res
@@ -134,9 +131,7 @@ app.post("/checkout", async function (req, res) {
 
 app.get("/detail/:product_id", async function (req, res) {
   const { product_id } = req.params;
-  const getProduct = await axios.get(
-    process.env.API + `menus/${product_id}`
-  );
+  const getProduct = await axios.get(process.env.API + `menus/${product_id}`);
 
   const product = Array.isArray(getProduct.data)
     ? getProduct.data
@@ -178,7 +173,10 @@ app.post("/auth", async function (req, res) {
 
   // Hard-coded admin authentication for demonstration purposes
 
-  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASS) {
+  if (
+    username === process.env.ADMIN_USERNAME &&
+    password === process.env.ADMIN_PASS
+  ) {
     // Generate JWT token
     const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
 
@@ -209,9 +207,7 @@ app.get("/admin", verifyToken, async function (req, res) {
 // GET menus view
 app.get("/admin/menus", verifyToken, async function (req, res) {
   try {
-    const getMenus = await axios.get(
-      process.env.API + "menu"
-    );
+    const getMenus = await axios.get(process.env.API + "menus");
 
     // Assuming getMenu.data is an array; if not, wrap it in an array
     const menus = Array.isArray(getMenus.data)
@@ -227,9 +223,7 @@ app.get("/admin/menus", verifyToken, async function (req, res) {
 // DELETE a menu item
 app.post("/admin/menus/delete/:id", verifyToken, async function (req, res) {
   try {
-    await axios.delete(
-      process.env.API + `menus/${req.params.id}`
-    );
+    await axios.delete(process.env.API + `menus/${req.params.id}`);
     res.redirect("/admin/menus");
   } catch (error) {
     console.error(error);
@@ -240,9 +234,7 @@ app.post("/admin/menus/delete/:id", verifyToken, async function (req, res) {
 // GET edit form
 app.get("/admin/menus/edit/:id", verifyToken, async function (req, res) {
   try {
-    const menu = await axios.get(
-      process.env.API`menus/${req.params.id}`
-    );
+    const menu = await axios.get(process.env.API`menus/${req.params.id}`);
     res.render("editMenu", { menu: menu.data });
   } catch (error) {
     console.error(error);
@@ -261,10 +253,8 @@ app.post("/admin/menus/edit/:id", verifyToken, async function (req, res) {
   };
 
   try {
-    await axios.put(
-      process.env.API + `menus/${req.params.id}`,
-      updatedMenu
-    );
+    await axios.put(process.env.API + `menus/${req.params.id}`, updatedMenu);
+
     res.redirect("/admin/menus");
   } catch (error) {
     console.error(error);
